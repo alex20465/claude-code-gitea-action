@@ -37,19 +37,15 @@ export async function prepareMcpConfig({
     const mcpConfig = {
       mcpServers: {
         gitea: {
-          command: "bun",
+          command: "gitea-mcp",
           args: [
-            "run",
-            `${process.env.GITHUB_ACTION_PATH}/src/mcp/gitea-mcp-server.ts`,
+            "-t",
+            "stdio",
+            "--host",
+            process.env.GITEA_API_URL || "https://gitea.com",
           ],
           env: {
-            GITHUB_TOKEN: githubToken,
-            REPO_OWNER: owner,
-            REPO_NAME: repo,
-            BRANCH_NAME: branch,
-            REPO_DIR: process.env.GITHUB_WORKSPACE || process.cwd(),
-            GITEA_API_URL:
-              process.env.GITEA_API_URL || "https://api.github.com",
+            GITEA_ACCESS_TOKEN: githubToken,
           },
         },
         local_git_ops: {

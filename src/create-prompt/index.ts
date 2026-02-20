@@ -567,6 +567,9 @@ ${eventData.isPR ? formattedChangedFiles || "No files changed" : ""}
 <is_pr>${eventData.isPR ? "true" : "false"}</is_pr>
 <trigger_context>${triggerContext}</trigger_context>
 <repository>${context.repository}</repository>
+<owner>${context.repository.split("/")[0]}</owner>
+<repo_name>${context.repository.split("/")[1]}</repo_name>
+<branch_name>${"claudeBranch" in eventData && eventData.claudeBranch ? eventData.claudeBranch : "baseBranch" in eventData && eventData.baseBranch ? eventData.baseBranch : ""}</branch_name>
 ${
   eventData.isPR
     ? `<pr_number>${eventData.prNumber}</pr_number>`
@@ -737,6 +740,7 @@ ${!eventData.isPR || !eventData.claudeBranch ? `6. Final Update:` : `5. Final Up
    ${!eventData.isPR || !eventData.claudeBranch ? `- If you created a branch and made changes, you must create a PR using mcp__local_git_ops__create_pull_request.` : ""}
 
 Important Notes:
+- GITEA MCP CONTEXT: The gitea MCP has access to the entire Gitea account across all repositories. When calling ANY gitea MCP tool, you MUST always explicitly pass the correct repository context: owner="${context.repository.split("/")[0]}", repo="${context.repository.split("/")[1]}". For branch-specific operations, use the branch name from the <branch_name> tag above.
 - All communication must happen through Gitea PR comments.
 - Never create new comments. Only update the existing comment using ${eventData.eventName === "pull_request_review_comment" ? "mcp__gitea__update_pull_request_comment" : "mcp__gitea__update_issue_comment"} with comment_id: ${context.claudeCommentId}.
 - This includes ALL responses: code reviews, answers to questions, progress updates, and final results.${eventData.isPR ? "\n- PR CRITICAL: After reading files and forming your response, you MUST post it by calling mcp__gitea__update_issue_comment. Do NOT just respond with a normal response, the user will not see it." : ""}
